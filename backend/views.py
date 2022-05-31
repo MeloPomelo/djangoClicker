@@ -17,7 +17,7 @@ def index(request):
 
     return render(request, 'index.html', {
         'core': core,
-        'boosts': boosts,  # Возвращаем бусты на фронтик
+        'boosts': boosts,
     })
 
 
@@ -68,7 +68,7 @@ def call_click(request):
     core = Core.objects.get(user=request.user)
     is_levelup = core.click()  # Труе если буст создался
     if is_levelup:
-        Boost.objects.create(core=core, price=core.level * 50, power=core.level * 20)  # Создание буста
+        Boost.objects.create(core=core, price=core.coins, power=core.level * 2)  # Создание буста
     core.save()
 
     return Response({'core': CoreSerializer(core).data, 'is_levelup': is_levelup})
@@ -80,7 +80,20 @@ class BoostViewSet(viewsets.ModelViewSet):
 
     # Переопределение метода get_queryset для получения бустов, привязанных к определенному ядру
     def get_queryset(self):
-        core = Core.objects.get(user=self.request.user) # Получение ядра пользователя
-        boosts = Boost.objects.filter(core=core) # Получение бустов ядра
+        core = Core.objects.get(user=self.request.user)  # Получение ядра пользователя
+        boosts = Boost.objects.filter(core=core)  # Получение бустов ядра
         return boosts
 
+    def partial_update(self, request, pk):
+        boost = self.queryset.get(pk=pk)
+
+        is_levelup = boost.levelup()
+        if not is_levelup:
+            return Response({"error": "Не хватает денег"})
+
+        old_boost_stats, new_boost_stats = is_levelup
+
+        return Response({
+            "old_boost_stats": self.serializer_class(old_boost_stats).data,
+            "new_boost_stats": self.serializer_class(new_boost_stats).data,
+        })
