@@ -3,12 +3,16 @@ from . import views
 
 
 boosts = views.BoostViewSet.as_view({
-    'get': 'list',  # Получить список всех бустов
-    'post': 'create',  # Создать буст
+    'get': 'list',
+    'post': 'create',
 })
 
 lonely_boost = views.BoostViewSet.as_view({
     'put': 'partial_update',  # Редактировать буст
+})
+achievements = views.AchievementViewSet.as_view({
+    'get': 'list',  # Получить список всех бустов
+    'post': 'create',  # Создать буст
 })
 
 urlpatterns = [
@@ -19,5 +23,6 @@ urlpatterns = [
     path('boosts/', boosts, name='boosts'),
     path('boost/<int:pk>/', lonely_boost, name='boost'),
     path('update_coins/', views.update_coins),
-    path('core/', views.get_core)
+    path('core/', views.get_core),
+    path('achievements/', achievements, name='achievements'),
 ]

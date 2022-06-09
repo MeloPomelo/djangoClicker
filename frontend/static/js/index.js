@@ -3,6 +3,7 @@
 * Пусть вас не смущает слово function в начале, в JS так можно определять классы.
 */
 function GameSession() {
+    this.level = 1
     this.coins = 0
     this.click_power = 1
     this.auto_click_power = 0
@@ -11,12 +12,18 @@ function GameSession() {
     /** Метод для инициализации данных. Данные подгружаются с бэкенда. */
     this.init = function() {
         getCore().then(core => {
+            this.level = core.level
             this.coins = core.coins
             this.click_power = core.click_power
             this.auto_click_power = core.auto_click_power
             this.next_level_price = core.next_level_price
             render()
         })
+    }
+
+    this.add_level = function(){
+        this.level += 1
+        render()
     }
     /** Метод для добавления монеток. */
     this.add_coins = function(coins) {
@@ -34,9 +41,11 @@ function GameSession() {
         this.auto_click_power += power
         render()
     }
+
     /** Метод для проверки на повышения уровня. Отправка запроса на сохранение данных, если уровень повышен. */
     this.check_levelup = function() {
         if (this.coins >= this.next_level_price) {
+            this.add_level()
             updateCoins(this.coins).then(core => {
                 this.next_level_price = core.next_level_price
             })
@@ -55,9 +64,11 @@ function call_click() {
 
 /** Функция для обновления количества монет, невероятной мощи и дружинных кликуш в HTML-элементах. */
 function render() {
+    const levelNode = document.getElementById('level')
     const coinsNode = document.getElementById('coins')
     const clickNode = document.getElementById('click_power')
     const autoClickNode = document.getElementById('auto_click_power')
+    levelNode.innerHTML = Game.level
     coinsNode.innerHTML = Game.coins
     clickNode.innerHTML = Game.click_power
     autoClickNode.innerHTML = Game.auto_click_power

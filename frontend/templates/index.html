@@ -5,16 +5,22 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
 </head>
+
 <body>
     <main class="app">
         <nav class="nav">
-            Привет, {{ user.username }}
-            <a href="{% url 'logout' %}">Выйти</a>
+            Привет, {{ user.username }}!
+            <form action="{% url 'logout' %}" target="_blank">
+                <button>Выйти</button>
+            </form>
         </nav>
 
         <div class="container">
             <div id='coins'>{{core.coins}}</div>
-            <button onclick="call_click()">Click!</button>
+            <input type="image" src="/static/images/panelka.png" width="200" height="220" onclick="call_click()">
+            <p>
+                Уровень: <span id="level">{{ core.level }}</span>
+            </p>
             <p>
                 Невероятная мощь клика: <span id="click_power">{{ core.click_power }}</span>
             </p>
@@ -36,17 +42,17 @@
             </div>
         </aside>
 
-<!--        <aside class="items" id="items">-->
-<!--            <h3> Магазин предметов</h3>-->
-<!--            <div class="items-holder" id="items-holder">-->
-<!--                {% for item in items %}-->
-<!--                    <button class="item" id="item_{{item.id}}" onclick="buy_item({{item.id}})">-->
-<!--                        <p>title: <span id="item_title">{{title.level}}</span></p>-->
-<!--                        <p><span id="item_price">{{item.price}}</span></p>-->
-<!--                    </button>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--        </aside>-->
+        <aside class="achievements" id="achievements">
+            <h3>Достижения</h3>
+            <div class="achievements-holder" id="achievements-holder">
+                {% for achievement in achievements %}
+                    <button class="achievement" id="achievement_{{achievement.id}}">
+                         <p><span id="achievement_title">{{achievement.title}}</span></p>
+                         <p><span id="achievement_description">{{achievement.description}}</span></p>
+                    </button>
+                {% endfor %}
+            </div>
+        </aside>
 
     </main>
 </body>
