@@ -1,0 +1,102 @@
+header {
+    padding-left: 25;
+    padding-right: 25;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 20px;
+    border-color: black;
+    border-style: solid;
+}
+
+body {
+    font-family: Gang of Three, sans-serif;
+    margin: 15;
+    background-color: rgb(252, 248, 232);
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-top: 20
+}
+
+.achievements {
+    border-color: black;
+    border-style: solid;
+    border-radius: 20px;
+    padding: 10
+}
+.container {
+
+    border-color: black;
+    border-style: solid;
+    border-radius: 20px;
+    padding: 10
+}
+.boosts {
+    border-color: black;
+    border-style: solid;
+    border-radius: 20px;
+    padding: 10
+}
+
+.coins {
+    font-size: 200%;
+    border-color: black;
+    border-style: solid;
+    border-radius: 25px;
+    margin-bottom: 50;
+}
+
+.stats {
+    border-color: black;
+    border-style: solid;
+    border-radius: 20px;
+    padding: 10
+}
+
+.middle {
+    margin: 50;
+    padding: 10;
+    text-align: center;
+}
+
+.achievement {
+    background-color: rgb(246, 255, 0);
+    border-color: black;
+    border-style: solid;
+    font-size: 12px;
+    border-radius: 10px;
+    margin: 3;
+}
+
+.boost_0 {
+    background-color: rgb(125, 255, 209);
+    border-color: black;
+    border-style: solid;
+    font-size: 12px;
+    border-radius: 10px;
+    margin: 3;
+}
+
+.boost_1 {
+    background-color: rgb(255, 36, 160);
+    border-color: black;
+    border-style: solid;
+    font-size: 12px;
+    border-radius: 10px;
+    margin: 3;
+}
+
+.title {
+    margin: 20
+}
+
+.boosts-holder {
+    margin: 20;
+}
+
+.achievements-holder {
+    margin: 20;
+}

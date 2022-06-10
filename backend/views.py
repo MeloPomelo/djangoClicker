@@ -46,18 +46,12 @@ def update_coins(request):
 
     # Дальнейшая логика осталась прежней, как в call_click
     if is_levelup:
-        Boost.objects.create(core=core, price=core.coins, power=core.level * 2,
-                             type=boost_type)  # Создание буста. Добавили атрибут type.
+        Boost.objects.create(core=core, price=core.coins, power=core.level * 2, type=boost_type)
         if core.level in LEVEL_ACHIEVEMENTS:
             achievement = LEVEL_ACHIEVEMENTS[core.level]
             Achievement.objects.create(core=core, title=achievement['title'], description=achievement['description'])
-    core.save()
 
-    for price in COINS_ACHIEVEMENTS_PRICES:
-        if core.coins >= price:
-            achievement = COINS_ACHIEVEMENTS[price]
-            Achievement.objects.create(core=core, title=achievement['title'], description=achievement['description'])
-            COINS_ACHIEVEMENTS_PRICES.remove(price)
+    core.save()
 
     return Response({
         'core': CoreSerializer(core).data,

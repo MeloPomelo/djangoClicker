@@ -38,7 +38,7 @@ class Core(models.Model):
 
     # Поменяли название с check_level_price, потому что теперь так гораздо больше подходит по смыслу.
     def calculate_next_level_price(self):
-        return (self.level** 2) * 2 * self.level
+        return (self.level ** 2) * 5 * self.level
 
 
 class Boost(models.Model):

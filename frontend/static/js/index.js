@@ -57,8 +57,8 @@ let Game = new GameSession() // Экземпляр класса GameSession.
 
 /** Функция обработки клика пользователя на какаши. */
 function call_click() {
-//    const kakashiNode = document.getElementById('kakashi')
-//    click_animation(kakashiNode, 50)
+    const buttonNode = document.getElementById('click')
+    click_animation(buttonNode, 50)
     Game.add_coins(Game.click_power)
 }
 
@@ -92,6 +92,17 @@ function add_boost(parent, boost) {
         <p>lvl: <span id="boost_level">${boost.level}</span></p>
         <p>+<span id="boost_power">${boost.power}</span></p>
         <p><span id="boost_price">${boost.price}</span></p>
+    `
+    parent.appendChild(button)
+}
+
+function add_achievement(parent, achievement) {
+    const button = document.createElement('button')
+    button.setAttribute('class', 'achievement')
+    button.setAttribute('id', `achievement{achievement.id}`)
+    button.innerHTML = `
+        <p><span id="achievement_title">${achievement.title}</span></p>
+        <p><span id="achievement_description">${achievement.description}</span></p>
     `
     parent.appendChild(button)
 }
@@ -139,6 +150,7 @@ function updateCoins(current_coins) {
     }).then(response => {
         if (response.is_levelup) {
             get_boosts()
+            get_achievements()
         }
         return response.core
     }).catch(error => console.log(error))
@@ -158,6 +170,23 @@ function get_boosts() {
         panel.innerHTML = ''
         boosts.forEach(boost => {
             add_boost(panel, boost)
+        })
+    }).catch(error => console.log(error))
+}
+
+function get_achievements() {
+    return fetch('/backend/achievements/', {
+        method: 'GET'
+    }).then(response => {
+        if (response.ok) {
+            return response.json()
+        }
+        return Promise.reject(response)
+    }).then(achievements => {
+        const panel = document.getElementById('achievements-holder')
+        panel.innerHTML = ''
+        achievements.forEach(achievement => {
+            add_achievement(panel, achievement)
         })
     }).catch(error => console.log(error))
 }
@@ -205,7 +234,7 @@ function setAutoSave() {
     setInterval(function() {
         /** Этот код срабатывает раз в минуту. */
         updateCoins(Game.coins)
-    }, 60000)
+    }, 5000)
 }
 
 /**
