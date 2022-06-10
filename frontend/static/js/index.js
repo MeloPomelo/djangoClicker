@@ -3,6 +3,7 @@
 * Пусть вас не смущает слово function в начале, в JS так можно определять классы.
 */
 function GameSession() {
+    this.level = 1
     this.coins = 0
     this.click_power = 1
     this.auto_click_power = 0
@@ -11,12 +12,18 @@ function GameSession() {
     /** Метод для инициализации данных. Данные подгружаются с бэкенда. */
     this.init = function() {
         getCore().then(core => {
+            this.level = core.level
             this.coins = core.coins
             this.click_power = core.click_power
             this.auto_click_power = core.auto_click_power
             this.next_level_price = core.next_level_price
             render()
         })
+    }
+
+    this.add_level = function(){
+        this.level += 1
+        render()
     }
     /** Метод для добавления монеток. */
     this.add_coins = function(coins) {
@@ -34,9 +41,11 @@ function GameSession() {
         this.auto_click_power += power
         render()
     }
+
     /** Метод для проверки на повышения уровня. Отправка запроса на сохранение данных, если уровень повышен. */
     this.check_levelup = function() {
         if (this.coins >= this.next_level_price) {
+            this.add_level()
             updateCoins(this.coins).then(core => {
                 this.next_level_price = core.next_level_price
             })
@@ -48,16 +57,18 @@ let Game = new GameSession() // Экземпляр класса GameSession.
 
 /** Функция обработки клика пользователя на какаши. */
 function call_click() {
-//    const kakashiNode = document.getElementById('kakashi')
-//    click_animation(kakashiNode, 50)
+    const buttonNode = document.getElementById('click')
+    click_animation(buttonNode, 50)
     Game.add_coins(Game.click_power)
 }
 
 /** Функция для обновления количества монет, невероятной мощи и дружинных кликуш в HTML-элементах. */
 function render() {
+    const levelNode = document.getElementById('level')
     const coinsNode = document.getElementById('coins')
     const clickNode = document.getElementById('click_power')
     const autoClickNode = document.getElementById('auto_click_power')
+    levelNode.innerHTML = Game.level
     coinsNode.innerHTML = Game.coins
     clickNode.innerHTML = Game.click_power
     autoClickNode.innerHTML = Game.auto_click_power
@@ -81,6 +92,17 @@ function add_boost(parent, boost) {
         <p>lvl: <span id="boost_level">${boost.level}</span></p>
         <p>+<span id="boost_power">${boost.power}</span></p>
         <p><span id="boost_price">${boost.price}</span></p>
+    `
+    parent.appendChild(button)
+}
+
+function add_achievement(parent, achievement) {
+    const button = document.createElement('button')
+    button.setAttribute('class', 'achievement')
+    button.setAttribute('id', `achievement{achievement.id}`)
+    button.innerHTML = `
+        <p><span id="achievement_title">${achievement.title}</span></p>
+        <p><span id="achievement_description">${achievement.description}</span></p>
     `
     parent.appendChild(button)
 }
@@ -128,6 +150,7 @@ function updateCoins(current_coins) {
     }).then(response => {
         if (response.is_levelup) {
             get_boosts()
+            get_achievements()
         }
         return response.core
     }).catch(error => console.log(error))
@@ -147,6 +170,23 @@ function get_boosts() {
         panel.innerHTML = ''
         boosts.forEach(boost => {
             add_boost(panel, boost)
+        })
+    }).catch(error => console.log(error))
+}
+
+function get_achievements() {
+    return fetch('/backend/achievements/', {
+        method: 'GET'
+    }).then(response => {
+        if (response.ok) {
+            return response.json()
+        }
+        return Promise.reject(response)
+    }).then(achievements => {
+        const panel = document.getElementById('achievements-holder')
+        panel.innerHTML = ''
+        achievements.forEach(achievement => {
+            add_achievement(panel, achievement)
         })
     }).catch(error => console.log(error))
 }
@@ -194,7 +234,7 @@ function setAutoSave() {
     setInterval(function() {
         /** Этот код срабатывает раз в минуту. */
         updateCoins(Game.coins)
-    }, 60000)
+    }, 5000)
 }
 
 /**

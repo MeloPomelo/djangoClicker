@@ -5,7 +5,7 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField  #
 class CoreSerializer(ModelSerializer):
     class Meta:
         model = Core
-        fields = ['coins', 'click_power', 'auto_click_power', 'next_level_price']  # Добавляем поле next_level_price, которое нужно вернуть на фронт.
+        fields = ['level', 'coins', 'click_power', 'auto_click_power', 'next_level_price']  # Добавляем поле next_level_price, которое нужно вернуть на фронт.
 
     next_level_price = SerializerMethodField()  # Поле, которое соответствует вычисляемому значению.
 
@@ -17,4 +17,10 @@ class CoreSerializer(ModelSerializer):
 class BoostSerializer(ModelSerializer):
     class Meta:
         model = Boost
+        fields = '__all__'
+
+
+class AchievementSerializer(ModelSerializer):
+    class Meta:
+        model = Achievement
         fields = '__all__'

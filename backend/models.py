@@ -38,7 +38,7 @@ class Core(models.Model):
 
     # Поменяли название с check_level_price, потому что теперь так гораздо больше подходит по смыслу.
     def calculate_next_level_price(self):
-        return (self.level ** 2) * 10 * (self.level)
+        return (self.level ** 2) * 5 * self.level
 
 
 class Boost(models.Model):
@@ -48,21 +48,19 @@ class Boost(models.Model):
     price = models.IntegerField(default=10)
     power = models.IntegerField(default=1)
 
-    def levelup(self, current_coins):
-        if self.price > current_coins: # Если монет недостаточно, ничего не делаем.
+    def level_up(self, current_coins):
+        if self.price > current_coins:  # Если монет недостаточно, ничего не делаем.
             return False
 
         old_boost_stats = copy(self)
 
-        self.core.coins = current_coins - self.price # Обновляем количество монет в базе данных.
+        self.core.coins = current_coins - self.price  # Обновляем количество монет в базе данных.
 
         self.core.click_power += self.power * BOOST_TYPE_VALUES[self.type][
             'click_power_scale']  # Умножаем силу клика на константу.
         self.core.auto_click_power += self.power * BOOST_TYPE_VALUES[self.type][
             'auto_click_power_scale']  # Умножаем силу автоклика на константу.
         self.core.save()
-
-        # old_boost_values = copy(self)
 
         self.level += 1
         self.power *= 2
@@ -71,3 +69,8 @@ class Boost(models.Model):
 
         return old_boost_stats, self
 
+
+class Achievement(models.Model):
+    core = models.ForeignKey(Core, null=False, on_delete=models.CASCADE)
+    title = models.CharField(max_length=25)
+    description = models.CharField(max_length=100)

@@ -6,20 +6,56 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .forms import UserForm
-from .models import Core, Boost
-from .serializers import CoreSerializer, BoostSerializer
+from .models import *
+from .serializers import *
+from .constants import *
 
 
 @login_required
 def index(request):
     core = Core.objects.get(user=request.user)
     boosts = Boost.objects.filter(core=core)  # Достаем бусты пользователя из базы
-    # items = Item.objects.filter(core=core)  # Достаем предметы пользователя из базы
+    achievements = Achievement.objects.filter(core=core)
 
     return render(request, 'index.html', {
         'core': core,
         'boosts': boosts,
-        # 'items': items,
+        'achievements': achievements
+    })
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+
+@api_view(['GET'])
+def get_core(request):
+    core = Core.objects.get(user=request.user)
+    return Response({'core': CoreSerializer(core).data})
+
+
+@api_view(['POST'])
+def update_coins(request):
+    coins = request.data['current_coins']  # Значение current_coins будем присылать в теле запроса.
+    core = Core.objects.get(user=request.user)
+
+    is_levelup, boost_type = core.set_coins(
+        coins)  # Метод set_coins скоро добавим в модель. Добавили boost_type для создания буста.
+
+    # Дальнейшая логика осталась прежней, как в call_click
+    if is_levelup:
+        Boost.objects.create(core=core, price=core.coins, power=core.level * 2, type=boost_type)
+        if core.level in LEVEL_ACHIEVEMENTS:
+            achievement = LEVEL_ACHIEVEMENTS[core.level]
+            Achievement.objects.create(core=core, title=achievement['title'], description=achievement['description'])
+
+    core.save()
+
+    return Response({
+        'core': CoreSerializer(core).data,
+        'is_levelup': is_levelup,
     })
 
 
@@ -58,38 +94,6 @@ class User_login(APIView):
         return render(request, 'login.html', {'form': self.form, 'invalid': True})
 
 
-@login_required
-def user_logout(request):
-    logout(request)
-    return redirect('login')
-
-
-@api_view(['GET'])
-def get_core(request):
-    core = Core.objects.get(user=request.user)
-    return Response({'core': CoreSerializer(core).data})
-
-
-@api_view(['POST'])
-def update_coins(request):
-    coins = request.data['current_coins']  # Значение current_coins будем присылать в теле запроса.
-    core = Core.objects.get(user=request.user)
-
-    is_levelup, boost_type = core.set_coins(
-        coins)  # Метод set_coins скоро добавим в модель. Добавили boost_type для создания буста.
-
-    # Дальнейшая логика осталась прежней, как в call_click
-    if is_levelup:
-        Boost.objects.create(core=core, price=core.coins, power=core.level * 2,
-                             type=boost_type)  # Создание буста. Добавили атрибут type.
-    core.save()
-
-    return Response({
-        'core': CoreSerializer(core).data,
-        'is_levelup': is_levelup,
-    })
-
-
 class BoostViewSet(viewsets.ModelViewSet):
     queryset = Boost.objects.all()
     serializer_class = BoostSerializer
@@ -104,7 +108,7 @@ class BoostViewSet(viewsets.ModelViewSet):
         coins = request.data['coins']  # Получаем количество монет из тела запроса.
         boost = self.queryset.get(pk=pk)
 
-        is_levelup = boost.levelup(
+        is_levelup = boost.level_up(
             coins)  # Передадим количество монет в метод. Этот метод мы скоро немного подкорректируем.
         if not is_levelup:
             return Response({"error": "Не хватает денег"})
@@ -116,4 +120,11 @@ class BoostViewSet(viewsets.ModelViewSet):
         })
 
 
+class AchievementViewSet(viewsets.ModelViewSet):
+    queryset = Achievement.objects.all()
+    serializer_class = AchievementSerializer
 
+    def get_queryset(self):
+        core = Core.objects.get(user=self.request.user)
+        achievements = Achievement.objects.filter(core=core)
+        return achievements

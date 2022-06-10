@@ -5,26 +5,42 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
 </head>
-<body>
-    <main class="app">
-        <nav class="nav">
-            Привет, {{ user.username }}
-            <a href="{% url 'logout' %}">Выйти</a>
-        </nav>
 
-        <div class="container">
-            <div id='coins'>{{core.coins}}</div>
-            <button onclick="call_click()">Click!</button>
-            <p>
-                Невероятная мощь клика: <span id="click_power">{{ core.click_power }}</span>
-            </p>
-            <p>
-                Самостоятельная дружина кликеров. Чел: <span id="auto_click_power">{{ core.auto_click_power }}</span>
-            </p>
+<body>
+    <header>
+        <h1 class="greeting">Привет, {{ user.username }}!</h1>
+        <form action="{% url 'logout' %}" target="_blank">
+            <input type="image" src="/static/images/jdm-exit.png" width="190" alt="Выход">
+        </form>
+    </header>
+
+    <main>
+        <div class="achievements" id="achievements">
+            <h2 class="title">Достижения:</h2>
+            <div class="achievements-holder" id="achievements-holder">
+                {% for achievement in achievements %}
+                    <button class="achievement" id="achievement_{{achievement.id}}">
+                         <p><span id="achievement_title">{{achievement.title}}</span></p>
+                         <p><span id="achievement_description">{{achievement.description}}</span></p>
+                    </button>
+                {% endfor %}
+            </div>
         </div>
 
-        <aside class="boosts" id="boosts">
-            <h3>Бусты</h3>
+        <div class="middle">
+            <div class="coins"><h3 id='coins'>{{core.coins}}</h3></div>
+            <div class="container">
+                <input type="image" src="/static/images/jdm1.png" width="400" onclick="call_click()" id="click">
+                <div class="stats">
+                    <p><span id="level" style="font-size: 25; color: red">{{ core.level }}</span> lvl</p>
+                    <p>Лошадиные силы: <span id="click_power" style="font-size: 25; color: red">{{ core.click_power }}</span> HP</p>
+                    <p>Крутящий момент: <span id="auto_click_power" style="font-size: 25; color: red">{{ core.auto_click_power }}</span> NM</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="boosts" id="boosts">
+            <h2 class="title">Бусты:</h2>
             <div class="boosts-holder" id="boosts-holder">
                 {% for boost in boosts %}
                     <button class="boost_{{boost.type}}" id="boost_{{boost.id}}" onclick="buy_boost({{boost.id}})">
@@ -34,20 +50,7 @@
                     </button>
                 {% endfor %}
             </div>
-        </aside>
-
-<!--        <aside class="items" id="items">-->
-<!--            <h3> Магазин предметов</h3>-->
-<!--            <div class="items-holder" id="items-holder">-->
-<!--                {% for item in items %}-->
-<!--                    <button class="item" id="item_{{item.id}}" onclick="buy_item({{item.id}})">-->
-<!--                        <p>title: <span id="item_title">{{title.level}}</span></p>-->
-<!--                        <p><span id="item_price">{{item.price}}</span></p>-->
-<!--                    </button>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-<!--        </aside>-->
-
+        </div>
     </main>
 </body>
 </html>
