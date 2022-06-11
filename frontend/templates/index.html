@@ -9,8 +9,8 @@
 <body>
     <header>
         <h1 class="greeting">Привет, {{ user.username }}!</h1>
-        <form action="{% url 'logout' %}" target="_blank">
-            <input type="image" src="/static/images/jdm-exit.png" width="190" alt="Выход">
+        <form action="{% url 'logout' %}" target="_blank" class='miata'>
+            <input type="image" src="/static/images/sx-exit.png" width="190" alt="Выход">
         </form>
     </header>
 
@@ -25,12 +25,13 @@
                     </button>
                 {% endfor %}
             </div>
+            <img src="/static/images/boss.png" height="150">
         </div>
 
         <div class="middle">
             <div class="coins"><h3 id='coins'>{{core.coins}}</h3></div>
             <div class="container">
-                <input type="image" src="/static/images/jdm1.png" width="400" onclick="call_click()" id="click">
+                <input type="image" src="/static/images/miata-open.png" width="400" onclick="call_click()" id="click">
                 <div class="stats">
                     <p><span id="level" style="font-size: 25; color: red">{{ core.level }}</span> lvl</p>
                     <p>Лошадиные силы: <span id="click_power" style="font-size: 25; color: red">{{ core.click_power }}</span> HP</p>

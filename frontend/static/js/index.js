@@ -8,6 +8,7 @@ function GameSession() {
     this.click_power = 1
     this.auto_click_power = 0
     this.next_level_price = 10
+    this.clicks = 1
 
     /** Метод для инициализации данных. Данные подгружаются с бэкенда. */
     this.init = function() {
@@ -57,7 +58,10 @@ let Game = new GameSession() // Экземпляр класса GameSession.
 
 /** Функция обработки клика пользователя на какаши. */
 function call_click() {
-    const buttonNode = document.getElementById('click')
+    var buttonNode = document.getElementById('click')
+    var imgs = new Array('/static/images/miata-open.png', '/static/images/miata-close.png')
+    var k = Game.clicks++
+    buttonNode.src = imgs[k % 2]
     click_animation(buttonNode, 50)
     Game.add_coins(Game.click_power)
 }

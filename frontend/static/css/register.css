@@ -1,0 +1,15 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Gang of Three, sans-serif;
+    margin: 15;
+    background-color: rgb(252, 248, 232);
+}
+
+main {
+    border-color: black;
+    border-style: solid;
+    border-radius: 20px;
+    padding: 10
+}

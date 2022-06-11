@@ -28,7 +28,6 @@ main {
     padding: 10
 }
 .container {
-
     border-color: black;
     border-style: solid;
     border-radius: 20px;
@@ -100,3 +99,8 @@ main {
 .achievements-holder {
     margin: 20;
 }
+
+.miata {
+    margin-bottom: 10;
+}
+
